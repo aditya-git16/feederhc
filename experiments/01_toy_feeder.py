@@ -18,10 +18,8 @@ def build_toy_feeder(pv_kw: float = 0.0, ev_kw: float = 0.0):
 
     Returns nothing; results live in the OpenDSS circuit until the next Clear/Solve.
     """
-    # -------------------------------------------------------------------------
     # Core network: substation source, two line segments, two constant-P/Q loads.
     # All OpenDSS lines starting with `!` are comments (ignored by the solver).
-    # -------------------------------------------------------------------------
     dss("""
     ! Reset OpenDSS memory. Required because __main__ calls this function multiple
     ! times; without Clear, elements (L1, Load1, ...) would stack and corrupt results.
@@ -66,10 +64,8 @@ def build_toy_feeder(pv_kw: float = 0.0, ev_kw: float = 0.0):
     CalcVoltageBases
     """)
 
-    # -------------------------------------------------------------------------
     # Optional PV at bus2: negative net load / generation injection on the far bus.
     # Only added when pv_kw > 0 so the base case stays load-only.
-    # -------------------------------------------------------------------------
     if pv_kw > 0:
         dss(f"""
         ! PVSystem model: inverter-connected solar at bus2, all three phases.
@@ -86,10 +82,8 @@ def build_toy_feeder(pv_kw: float = 0.0, ev_kw: float = 0.0):
         ~ pf=1
         """)
 
-    # -------------------------------------------------------------------------
     # Optional EV charging at bus2: extra constant-P load stacked on Load2.
     # kvar=0 -> unity pf charging; increases current and voltage drop on L1+L2.
-    # -------------------------------------------------------------------------
     if ev_kw > 0:
         dss(f"""
         New Load.EV_bus2
